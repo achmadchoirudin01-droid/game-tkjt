@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarik Tambang Jaringan Komputer - TJKT Kelas 10</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg,#dff3ff,#f8fbff 45%,#fff0d9);
+    color: #17324d;
+  }
+  .wrap { max-width: 1100px; margin: auto; padding: 20px; }
+  header {
+    background: #fff;
+    border-radius: 22px;
+    padding: 22px;
+    text-align: center;
+    box-shadow: 0 10px 30px #16324d18;
+    margin-bottom: 18px;
+  }
+  h1 { margin: 0 0 7px; color: #075985; font-size: clamp(25px,4vw,40px); }
+  .subtitle { margin: 0; color: #557086; }
+  .scorebar {
+    display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    margin: 14px 0;
+  }
+  .badge {
+    background:#fff; padding:10px 15px; border-radius:14px;
+    box-shadow:0 5px 16px #16324d12; font-weight:700;
+  }
+  .game {
+    background:#fff; border-radius:22px; padding:18px;
+    box-shadow:0 10px 30px #16324d18;
+  }
+  .teams {
+    display:grid; grid-template-columns:1fr 1fr; gap:14px; text-align:center;
+    margin-bottom:10px;
+  }
+  .team {
+    padding:12px; border-radius:17px; font-weight:800; font-size:20px;
+  }
+  .student { background:#dff4ff; color:#0369a1; }
+  .computer { background:#ffe9d8; color:#c2410c; }
+
+  .arena {
+    position:relative; height:220px; overflow:hidden; border-radius:18px;
+    background:linear-gradient(#e9f8ff 0 63%, #a9d48b 63% 100%);
+    border:3px solid #d5e8f3;
+  }
+  .ground-line {
+    position:absolute; left:50%; top:63%; bottom:0; width:5px;
+    transform:translateX(-50%); background:#fff;
+    box-shadow:0 0 0 2px #6b8e5a55;
+  }
+  .flag {
+    position:absolute; top:24%; width:3px; height:72px; background:#6b4f32;
+  }
+  .flag:after {
+    content:""; position:absolute; top:0; width:42px; height:27px;
+    background:#f59e0b;
+  }
+  .flag.left { left:17%; }
+  .flag.left:after { left:3px; }
+  .flag.right { right:17%; }
+  .flag.right:after { right:3px; background:#ef4444; }
+
+  .person {
+    position:absolute; bottom:35px; width:80px; height:100px;
+    transition:left .45s ease, right .45s ease;
+    text-align:center; font-size:52px; z-index:3;
+  }
+  .person.left { left:7%; }
+  .person.right { right:7%; }
+  .person .label {
+    font-size:13px; font-weight:800; background:#fff; border-radius:9px;
+    padding:4px 7px; display:inline-block; box-shadow:0 3px 8px #0002;
+  }
+
+  .rope {
+    position:absolute; left:10%; right:10%; top:48%; height:15px;
+    background:#9a6b3f; border-radius:10px; z-index:2;
+    transition:transform .45s ease;
+    box-shadow: inset 0 3px 4px #0003;
+  }
+  .rope:before, .rope:after {
+    content:""; position:absolute; top:-5px; width:25px; height:25px;
+    border-radius:50%; background:#d6a15e; border:3px solid #80552e;
+  }
+  .rope:before { left:-9px; } .rope:after { right:-9px; }
+  .knot {
+    position:absolute; top:50%; left:50%; width:38px; height:38px;
+    transform:translate(-50%,-50%); background:#ffd166; border:5px solid #9a6b3f;
+    border-radius:50%; z-index:4; transition:left .45s ease;
+  }
+  .question {
+    margin-top:18px; padding:20px; background:#f7fbfe;
+    border:2px solid #dcecf5; border-radius:18px;
+  }
+  .qnum { color:#0e7490; font-weight:800; margin-bottom:6px; }
+  .question h2 { font-size:clamp(18px,2.6vw,25px); margin:4px 0 16px; }
+  .answers { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  button {
+    border:0; border-radius:13px; padding:14px 16px; font-size:16px;
+    font-weight:700; cursor:pointer; background:#fff; color:#17324d;
+    border:2px solid #cfe1ec; transition:.2s;
+  }
+  button:hover { transform:translateY(-2px); border-color:#0ea5e9; background:#f0faff; }
+  button:disabled { cursor:not-allowed; opacity:.72; transform:none; }
+  .feedback {
+    margin-top:14px; min-height:44px; padding:10px 14px; border-radius:12px;
+    font-weight:700; display:flex; align-items:center;
+  }
+  .info { background:#eef7ff; color:#075985; }
+  .correct { background:#dcfce7; color:#166534; }
+  .wrong { background:#fee2e2; color:#991b1b; }
+  .controls { text-align:center; margin-top:15px; }
+  .restart {
+    background:#075985; color:white; border:none; padding:12px 24px;
+  }
+  .restart:hover { background:#0369a1; }
+  .hidden { display:none; }
+  .win {
+    text-align:center; padding:22px; border-radius:18px; margin-top:16px;
+    background:linear-gradient(135deg,#dcfce7,#effff5); border:2px solid #86efac;
+  }
+  .win h2 { margin:0 0 7px; color:#166534; }
+  .tip {
+    margin-top:16px; background:#fff7ed; border-left:5px solid #f59e0b;
+    padding:12px 15px; border-radius:10px; color:#7c2d12;
+  }
+  @media(max-width:650px){
+    .answers { grid-template-columns:1fr; }
+    .arena { height:190px; }
+    .person.left { left:2%; } .person.right { right:2%; }
+    .rope { left:14%; right:14%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🪢 TARIK TAMBANG JARINGAN</h1>
+    <p class="subtitle">Game pengenalan Jaringan Komputer — TJKT Kelas 10</p>
+  </header>
+
+  <div class="scorebar">
+    <div class="badge">👨‍🎓 Siswa: <span id="studentScore">0</span> benar</div>
+    <div class="badge">📘 Soal: <span id="qCounter">1</span> / 5</div>
+    <div class="badge">💻 Komputer: <span id="computerPull">0</span> tarikan</div>
+  </div>
+
+  <section class="game">
+    <div class="teams">
+      <div class="team student">👨‍🎓 TIM SISWA<br><small>Tarik ke kiri!</small></div>
+      <div class="team computer">💻 KOMPUTER<br><small>Tarik ke kanan!</small></div>
+    </div>
+
+    <div class="arena">
+      <div class="ground-line"></div>
+      <div class="flag left"></div>
+      <div class="flag right"></div>
+      <div class="person left" id="student">🧑‍🎓<div class="label">Siswa</div></div>
+      <div class="person right" id="computer">🤖<div class="label">Komputer</div></div>
+      <div class="rope" id="rope"></div>
+      <div class="knot" id="knot"></div>
+    </div>
+
+    <div class="question" id="questionBox">
+      <div class="qnum" id="qNum">PERTANYAAN 1</div>
+      <h2 id="questionText"></h2>
+      <div class="answers" id="answers"></div>
+      <div class="feedback info" id="feedback">Pilih jawaban yang menurutmu paling tepat.</div>
+    </div>
+
+    <div id="result" class="win hidden"></div>
+
+    <div class="tip">
+      💡 <b>Aturan:</b> jawaban benar membuat tali bergerak ke kiri. Jawaban salah membuat tali bergerak ke kanan.
+      Untuk memenangkan permainan, siswa harus menjawab <b>semua 5 pertanyaan dengan benar</b>.
+    </div>
+
+    <div class="controls">
+      <button class="restart" onclick="restartGame()">🔄 Mulai Ulang</button>
+    </div>
+  </section>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Apa yang dimaksud dengan jaringan komputer?",
+    a: [
+      "Kumpulan komputer/perangkat yang saling terhubung untuk berbagi data dan sumber daya",
+      "Satu komputer yang digunakan tanpa koneksi",
+      "Program untuk menggambar jaringan",
+      "Kabel listrik untuk komputer"
+    ],
+    correct: 0,
+    explain: "Benar! Jaringan komputer menghubungkan perangkat agar dapat berkomunikasi dan berbagi sumber daya."
+  },
+  {
+    q: "Perangkat yang digunakan untuk menghubungkan beberapa komputer dalam satu jaringan LAN adalah ...",
+    a: ["Monitor", "Switch", "Keyboard", "Printer"],
+    correct: 1,
+    explain: "Benar! Switch menghubungkan banyak perangkat dalam jaringan LAN."
+  },
+  {
+    q: "Kabel yang umum digunakan untuk jaringan Ethernet pada LAN adalah ...",
+    a: ["UTP", "HDMI", "USB", "Kabel speaker"],
+    correct: 0,
+    explain: "Benar! Kabel UTP (Unshielded Twisted Pair) banyak digunakan untuk koneksi Ethernet."
+  },
+  {
+    q: "Apa fungsi alamat IP pada perangkat jaringan?",
+    a: [
+      "Memberi identitas/alamat pada perangkat agar dapat berkomunikasi dalam jaringan",
+      "Mengatur kecerahan monitor",
+      "Memperbesar ukuran RAM",
+      "Mengisi daya baterai"
+    ],
+    correct: 0,
+    explain: "Benar! Alamat IP digunakan sebagai identitas/alamat perangkat dalam jaringan."
+  },
+  {
+    q: "Jaringan yang mencakup area kecil seperti ruang laboratorium sekolah disebut ...",
+    a: ["WAN", "MAN", "LAN", "Internet"],
+    correct: 2,
+    explain: "Benar! LAN (Local Area Network) digunakan pada area terbatas seperti ruang, lab, atau gedung."
+  }
+];
+
+let current = 0;
+let studentScore = 0;
+let computerPull = 0;
+let ropePos = 50;
+
+const qText = document.getElementById("questionText");
+const answers = document.getElementById("answers");
+const feedback = document.getElementById("feedback");
+const qCounter = document.getElementById("qCounter");
+const qNum = document.getElementById("qNum");
+const studentScoreEl = document.getElementById("studentScore");
+const computerPullEl = document.getElementById("computerPull");
+const knot = document.getElementById("knot");
+const result = document.getElementById("result");
+const questionBox = document.getElementById("questionBox");
+
+function loadQuestion() {
+  const item = questions[current];
+  qCounter.textContent = current + 1;
+  qNum.textContent = `PERTANYAAN ${current + 1}`;
+  qText.textContent = item.q;
+  answers.innerHTML = "";
+  feedback.className = "feedback info";
+  feedback.textContent = "Pilih jawaban yang menurutmu paling tepat.";
+
+  item.a.forEach((answer, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = answer;
+    btn.onclick = () => answerQuestion(i);
+    answers.appendChild(btn);
+  });
+}
+
+function answerQuestion(index) {
+  const item = questions[current];
+  const buttons = [...answers.querySelectorAll("button")];
+  buttons.forEach(b => b.disabled = true);
+
+  if (index === item.correct) {
+    studentScore++;
+    ropePos = Math.max(8, ropePos - 10);
+    studentScoreEl.textContent = studentScore;
+    feedback.className = "feedback correct";
+    feedback.textContent = "✅ " + item.explain;
+  } else {
+    computerPull++;
+    ropePos = Math.min(92, ropePos + 10);
+    computerPullEl.textContent = computerPull;
+    feedback.className = "feedback wrong";
+    feedback.textContent = "❌ Kurang tepat. " + item.explain;
+  }
+
+  knot.style.left = ropePos + "%";
+  document.getElementById("rope").style.transform = `translateX(${(ropePos-50)*0.35}px)`;
+
+  setTimeout(() => {
+    current++;
+    if (current < questions.length) {
+      loadQuestion();
+    } else {
+      finishGame();
+    }
+  }, 1300);
+}
+
+function finishGame() {
+  questionBox.classList.add("hidden");
+  result.classList.remove("hidden");
+
+  if (studentScore === questions.length) {
+    result.innerHTML = `
+      <h2>🏆 SISWA MENANG!</h2>
+      <p>Hebat! Semua <b>5 pertanyaan</b> tentang jaringan komputer dijawab dengan benar.</p>
+      <p>🎉 Kamu berhasil menarik tali sampai ke sisi siswa!</p>`;
+  } else {
+    result.style.background = "linear-gradient(135deg,#fff1f2,#fff7f7)";
+    result.style.borderColor = "#fca5a5";
+    result.innerHTML = `
+      <h2 style="color:#b91c1c">🤖 KOMPUTER MENANG!</h2>
+      <p>Skor kamu <b>${studentScore}/5</b>. Agar menang, semua 5 pertanyaan harus dijawab benar.</p>
+      <p>💪 Coba lagi dan kuasai dasar-dasar jaringan komputer!</p>`;
+  }
+}
+
+function restartGame() {
+  current = 0;
+  studentScore = 0;
+  computerPull = 0;
+  ropePos = 50;
+  studentScoreEl.textContent = "0";
+  computerPullEl.textContent = "0";
+  knot.style.left = "50%";
+  document.getElementById("rope").style.transform = "translateX(0)";
+  result.classList.add("hidden");
+  questionBox.classList.remove("hidden");
+  result.style.background = "";
+  result.style.borderColor = "";
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
